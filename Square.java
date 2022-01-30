@@ -67,6 +67,14 @@ public class Square extends OpMode
     private Servo hand = null;
     double wheelSpeed = 0;
 
+    double[] speeds = {0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 1};
+    int currentSpeed = 0;
+
+    double leftBackInitial;
+    double rightBackInitial;
+    double leftFrontInitial;
+    double rightFrontInitial;
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -92,6 +100,10 @@ public class Square extends OpMode
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setDirection(DcMotor.Direction.FORWARD);
 
+        leftBackInitial = leftBack.getCurrentPosition();
+        rightBackInitial = rightBack.getCurrentPosition();
+        leftFrontInitial = leftFront.getCurrentPosition();
+        rightFrontInitial = rightFront.getCurrentPosition();
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -112,7 +124,7 @@ public class Square extends OpMode
         runtime.reset();
     }
     boolean aPressed = false;
-    double powerMultiplier = 1;
+    double powerMultiplier = 0.0;
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
      */
@@ -127,14 +139,23 @@ public class Square extends OpMode
         double forward = -gamepad1.left_stick_y;
         double side  =  gamepad1.left_stick_x;
         double rotation = -gamepad1.right_stick_x;
-        rightBackPower = 0.5;
-        rightFrontPower = 0.5;
-        leftBackPower = -0.5;
-        leftFrontPower = -0.5;
         rightBackPower    = Range.clip((forward + side + rotation), -1.0, 1.0)*powerMultiplier ;
         leftBackPower   = Range.clip((forward - side - rotation), -1.0, 1.0)*powerMultiplier ;
         rightFrontPower    = Range.clip((forward - side + rotation), -1.0, 1.0)*powerMultiplier ;
         leftFrontPower   = Range.clip((forward + side - rotation), -1.0, 1.0)*powerMultiplier ;
+
+        if(gamepad1.dpad_up){
+            leftFrontPower = powerMultiplier;
+        }
+        if(gamepad1.dpad_down){
+            leftBackPower = powerMultiplier;
+        }
+        if(gamepad1.dpad_left){
+            rightFrontPower = powerMultiplier;
+        }
+        if(gamepad1.dpad_right){
+            rightBackPower = powerMultiplier;
+        }
 
         leftBack.setPower(leftBackPower);
         rightBack.setPower(rightBackPower);
@@ -149,16 +170,13 @@ public class Square extends OpMode
             arm.setPower(0);
         }
         if (gamepad1.left_bumper) {
-            hand.setPosition(1);
-        } else if(gamepad1.right_bumper) {
             hand.setPosition(0.5);
+        } else if(gamepad1.right_bumper) {
+            hand.setPosition(0.75);
         }
-        wheelSpeed *= 0.95;
-        if (gamepad1.dpad_left) {
-            wheelSpeed += 0.04;
-        } else if (gamepad1.dpad_right) {
-            wheelSpeed -= 0.04;
-        }
+        wheelSpeed = 0;
+        wheelSpeed += gamepad1.left_trigger;
+        wheelSpeed -= gamepad1.right_trigger;
         if(wheelSpeed < 1) {
             wheel.setPower(wheelSpeed);
         }else {
@@ -167,19 +185,33 @@ public class Square extends OpMode
 
         if(gamepad1.b) {
             if (!aPressed) {
-                if(powerMultiplier == 1) {
-                    powerMultiplier = 0.5;
-                }else{
-                    powerMultiplier = 1;
-                }
+                currentSpeed++;
+                if(currentSpeed == speeds.length)
+                    currentSpeed = 0;
             }
             aPressed = true;
         }else{
             aPressed = false;
         }
+        if(gamepad1.x) {
+            leftBackInitial = leftBack.getCurrentPosition();
+            rightBackInitial = rightBack.getCurrentPosition();
+            leftFrontInitial = leftFront.getCurrentPosition();
+            rightFrontInitial = rightFront.getCurrentPosition();
+        }
+        powerMultiplier = speeds[currentSpeed];
 
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Power", wheelSpeed);
+        telemetry.clear();
+//        telemetry.addData("Left front initial", leftFrontInitial);
+//        telemetry.addData("Right front initial", rightFrontInitial);
+//        telemetry.addData("Left back initial", leftBackInitial);
+//        telemetry.addData("Right back initial", rightBackInitial);
+        telemetry.addData("Left front", leftFront.getCurrentPosition() - leftFrontInitial);
+        telemetry.addData("Right front", rightFront.getCurrentPosition() - rightFrontInitial);
+        telemetry.addData("Left back", leftBack.getCurrentPosition() - leftBackInitial);
+        telemetry.addData("Right back", rightBack.getCurrentPosition() - rightBackInitial);
+        telemetry.addData("Power", powerMultiplier);
+        telemetry.update();
 
 
 
