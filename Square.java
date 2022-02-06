@@ -211,8 +211,10 @@ public class Square extends OpMode
         telemetry.addData("Left back", leftBack.getCurrentPosition() - leftBackInitial);
         telemetry.addData("Right back", rightBack.getCurrentPosition() - rightBackInitial);
         telemetry.addData("Power", powerMultiplier);
-        telemetry.update();
 
+//        telemetry.addData("x", leftFront.getCurrentPosition() + rightBack.getCurrentPosition() - rightFront.getCurrentPosition() - leftBack.getCurrentPosition());
+//        telemetry.addData("y", leftFront.getCurrentPosition() + rightBack.getCurrentPosition() + rightFront.getCurrentPosition() + leftBack.getCurrentPosition());
+        telemetry.update();
 
 
     }
