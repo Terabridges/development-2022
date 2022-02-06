@@ -66,10 +66,10 @@ public class NotASquare extends OpMode
     public void init() {
         telemetry.addData("Status", "Initialized");
 
-        theMotor  = hardwareMap.get(DcMotor.class, "testmotor1");
+        theMotor  = hardwareMap.get(DcMotor.class, "left_front");
         theMotor.setDirection(DcMotor.Direction.REVERSE);
         theMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        theOtherMotor  = hardwareMap.get(DcMotor.class, "testmotor2");
+        theOtherMotor  = hardwareMap.get(DcMotor.class, "right_front");
         theOtherMotor.setDirection(DcMotor.Direction.FORWARD);
         theOtherMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 

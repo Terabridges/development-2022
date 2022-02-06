@@ -67,7 +67,8 @@ public class Square extends OpMode
     private Servo hand = null;
     double wheelSpeed = 0;
 
-    double[] speeds = {0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 1};
+//    double[] speeds = {0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 1};
+    double[] speeds = {0.5, 1};
     int currentSpeed = 0;
 
     double leftBackInitial;
@@ -136,13 +137,13 @@ public class Square extends OpMode
         double leftFrontPower;
         double rightFrontPower;
 
-        double forward = -gamepad1.left_stick_y;
-        double side  =  gamepad1.left_stick_x;
+        double forward = -gamepad1.left_stick_y*powerMultiplier;
+        double side  =  gamepad1.left_stick_x*powerMultiplier;
         double rotation = -gamepad1.right_stick_x;
-        rightBackPower    = Range.clip((forward + side + rotation), -1.0, 1.0)*powerMultiplier ;
-        leftBackPower   = Range.clip((forward - side - rotation), -1.0, 1.0)*powerMultiplier ;
-        rightFrontPower    = Range.clip((forward - side + rotation), -1.0, 1.0)*powerMultiplier ;
-        leftFrontPower   = Range.clip((forward + side - rotation), -1.0, 1.0)*powerMultiplier ;
+        rightBackPower    = Range.clip((forward + side + rotation), -1.0, 1.0) ;
+        leftBackPower   = Range.clip((forward - side - rotation), -1.0, 1.0);
+        rightFrontPower    = Range.clip((forward - side + rotation), -1.0, 1.0);
+        leftFrontPower   = Range.clip((forward + side - rotation), -1.0, 1.0);
 
         if(gamepad1.dpad_up){
             leftFrontPower = powerMultiplier;
@@ -172,7 +173,7 @@ public class Square extends OpMode
         if (gamepad1.left_bumper) {
             hand.setPosition(0.5);
         } else if(gamepad1.right_bumper) {
-            hand.setPosition(0.75);
+            hand.setPosition(0.7);
         }
         wheelSpeed = 0;
         wheelSpeed += gamepad1.left_trigger;
