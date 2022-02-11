@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@Autonomous(name="AutonomousDriveBlue", group="Pushbot")
+@Autonomous(name="AutonomousDriveBlue DON'T USE", group="Pushbot")
 
 
 public class AutonomousDriveBlue extends LinearOpMode {
