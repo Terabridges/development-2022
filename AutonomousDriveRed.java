@@ -90,7 +90,7 @@ public class AutonomousDriveRed extends LinearOpMode {
         leftBack.setPower(0.1);
         rightFront.setPower(0.1);
         rightBack.setPower(-0.5);
-        sleep(1600);
+        sleep(1500);
 
         //Forward
         leftFront.setPower(0.5);
@@ -98,43 +98,38 @@ public class AutonomousDriveRed extends LinearOpMode {
         rightFront.setPower(0.5);
         rightBack.setPower(0.5);
         sleep(250);
-        //Rotate
-        leftFront.setPower(-0.25);
-        rightFront.setPower(-0.25);
-        leftBack.setPower(0.25);
-        rightBack.setPower(0.25);
-        sleep(1000);
-        //Back
-        leftFront.setPower(-0.25);
-        rightFront.setPower(-0.25);
-        leftBack.setPower(-0.25);
-        rightBack.setPower(-0.25);
-        sleep(2200);
-
-        //Stopish
-        leftFront.setPower(-0.2);
-        rightFront.setPower(-0.2);
-        leftBack.setPower(-0.2);
-        rightBack.setPower(-0.2);
-
-        //Wheel movement
-        wheel.setPower(0.5);
-        sleep(5000);
-
 
         //Left
         leftFront.setPower(-0.5);
         rightFront.setPower(0.5);
         leftBack.setPower(0.5);
         rightBack.setPower(-0.5);
-        sleep(750);
+        sleep(1175);
 
-        //Back
+        //Stopish
+        leftFront.setPower(-0.15);
+        rightFront.setPower(0.05);
+        leftBack.setPower(0.05);
+        rightBack.setPower(-0.15);
+
+        //Wheel movement
+        wheel.setPower(0.5);
+        sleep(6000);
+
+
+        //Forward
+        leftFront.setPower(0.5);
+        rightFront.setPower(0.5);
+        leftBack.setPower(0.5);
+        rightBack.setPower(0.5);
+        sleep(700);
+
+        //Left
         leftFront.setPower(-0.25);
-        rightFront.setPower(-0.25);
-        leftBack.setPower(-0.25);
+        rightFront.setPower(0.25);
+        leftBack.setPower(0.25);
         rightBack.setPower(-0.25);
-        sleep(300);
+        sleep(650);
 
 
         stop();
