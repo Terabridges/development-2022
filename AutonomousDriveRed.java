@@ -122,7 +122,7 @@ public class AutonomousDriveRed extends LinearOpMode {
         rightFront.setPower(0.5);
         leftBack.setPower(0.5);
         rightBack.setPower(0.5);
-        sleep(700);
+        sleep(65);
 
         //Left
         leftFront.setPower(-0.25);

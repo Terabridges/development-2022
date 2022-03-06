@@ -74,8 +74,8 @@ public class AutonomousRedOdometer extends LinearOpMode {
 
         double startTime = getRuntime();
 
-        double xAmt = (Math.random() - 0.5)/2;
-        double yAmt = (Math.random() - 0.5)/2;
+        double xAmt = 0.125;//(Math.random() - 0.5)/2;
+        double yAmt = 0.25;//(Math.random() - 0.5)/2;
         double leftFrontPower = yAmt + xAmt;
         double rightFrontPower = yAmt - xAmt;
         double leftBackPower = yAmt - xAmt;
@@ -84,10 +84,16 @@ public class AutonomousRedOdometer extends LinearOpMode {
         int rightFrontPreMovePosition = rightFront.getCurrentPosition();
         int leftBackPreMovePosition = leftBack.getCurrentPosition();
         int rightBackPreMovePosition = rightBack.getCurrentPosition();
-        while(true) {
+        double leftFrontMultiplier = 1;
+        double rightFrontMultiplier = 1;
+        double leftBackMultiplier = 1;
+        double rightBackMultiplier = 1;
+
+        while(opModeIsActive()) {
 
             double time = getRuntime() + 1;
             while(getRuntime() < time){
+                telemetry.clear();
                 double xPos = leftFront.getCurrentPosition() + rightBack.getCurrentPosition() - rightFront.getCurrentPosition() - leftBack.getCurrentPosition();
                 double yPos = leftFront.getCurrentPosition() + rightBack.getCurrentPosition() + rightFront.getCurrentPosition() + leftBack.getCurrentPosition();
                 if(xPos > 1000){
@@ -136,16 +142,52 @@ public class AutonomousRedOdometer extends LinearOpMode {
                     leftBackPower = yAmt - xAmt;
                     rightBackPower = yAmt + xAmt;
                 }
-                leftFront.setPower(leftFrontPower);
-                rightFront.setPower(rightFrontPower);
-                leftBack.setPower(leftBackPower);
-                rightBack.setPower(rightBackPower);
+                double leftFrontProgress = Math.abs((leftFront.getCurrentPosition() - leftFrontPreMovePosition)/leftFrontPower);
+                double leftBackProgress = Math.abs((leftBack.getCurrentPosition() - leftBackPreMovePosition)/leftBackPower);
+                double rightFrontProgress = Math.abs((rightFront.getCurrentPosition() - rightFrontPreMovePosition)/rightFrontPower);
+                double rightBackProgress = Math.abs((rightBack.getCurrentPosition() - rightBackPreMovePosition)/rightBackPower);
+                double averageProgress = (leftFrontProgress + leftBackProgress + rightFrontProgress + rightBackProgress)/4;
+                double sensitivity = 2500; // Higher numbers mean more distance before change.
+                leftFrontMultiplier = 1 + (averageProgress - leftFrontProgress)/sensitivity;
+                rightFrontMultiplier = 1 + (averageProgress - rightFrontProgress)/sensitivity;
+                leftBackMultiplier = 1 + (averageProgress - leftBackProgress)/sensitivity;
+                rightBackMultiplier = 1 + (averageProgress - rightBackProgress)/sensitivity;
+//                if(leftFrontProgress <= leftFrontProgress && leftFrontProgress <= leftBackProgress && leftFrontProgress <= rightFrontProgress && leftFrontProgress <= rightBackProgress){
+//                    telemetry.addData("wheel is falling behind", "Left Front");
+//                    leftFrontMultiplier *= 1.01;
+//
+//                }
+//                if(rightFrontProgress <= leftFrontProgress && rightFrontProgress <= leftBackProgress && rightFrontProgress <= rightFrontProgress && rightFrontProgress <= rightBackProgress){
+//                    telemetry.addData("wheel is falling behind", "Right Front");
+//                    rightFrontMultiplier *= 1.02;
+//                }
+//                if(leftBackProgress <= leftFrontProgress && leftBackProgress <= leftBackProgress && leftBackProgress <= rightFrontProgress && leftBackProgress <= rightBackProgress){
+//                    telemetry.addData("wheel is falling behind", "Left Back");
+//                    leftBackMultiplier *= 1.02;
+//                }
+//                if(rightBackProgress <= leftFrontProgress && rightBackProgress <= leftBackProgress && rightBackProgress <= rightFrontProgress && rightBackProgress <= rightBackProgress){
+//                    telemetry.addData("wheel is falling behind", "Right Back");
+//                    rightBackMultiplier *= 1.02;
+//                }
+//                if(leftFrontMultiplier > 1){leftFrontMultiplier /= 1.004;}
+//                if(rightFrontMultiplier > 1){rightFrontMultiplier /= 1.004;}
+//                if(leftBackMultiplier > 1){leftBackMultiplier /= 1.004;}
+//                if(rightBackMultiplier > 1){rightBackMultiplier /= 1.004;}
+                telemetry.addData("LF", leftFrontProgress);
+                telemetry.addData("RF", rightFrontProgress);
+                telemetry.addData("LB", leftBackProgress);
+                telemetry.addData("RB", rightBackProgress);
 
-                telemetry.clear();
-                telemetry.addData("time", time - getRuntime());
-                telemetry.addData("x", leftFront.getCurrentPosition() + rightBack.getCurrentPosition() - rightFront.getCurrentPosition() - leftBack.getCurrentPosition());
-                telemetry.addData("y", leftFront.getCurrentPosition() + rightBack.getCurrentPosition() + rightFront.getCurrentPosition() + leftBack.getCurrentPosition());
+
+
+//                telemetry.addData("time", time - getRuntime());
+//                telemetry.addData("x", leftFront.getCurrentPosition() + rightBack.getCurrentPosition() - rightFront.getCurrentPosition() - leftBack.getCurrentPosition());
+//                telemetry.addData("y", leftFront.getCurrentPosition() + rightBack.getCurrentPosition() + rightFront.getCurrentPosition() + leftBack.getCurrentPosition());
                 telemetry.update();
+                leftFront.setPower(leftFrontPower*leftFrontMultiplier);
+                rightFront.setPower(rightFrontPower*rightFrontMultiplier);
+                leftBack.setPower(leftBackPower*leftBackMultiplier);
+                rightBack.setPower(rightBackPower*rightBackMultiplier);
 
             }
 

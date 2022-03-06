@@ -126,6 +126,7 @@ public class TeleOP extends OpMode
     }
     boolean aPressed = false;
     double powerMultiplier = 0.0;
+    double rotationMultiplier = 0.5;
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
      */
@@ -139,7 +140,7 @@ public class TeleOP extends OpMode
 
         double forward = -gamepad1.left_stick_y*powerMultiplier;
         double side  =  gamepad1.left_stick_x*powerMultiplier;
-        double rotation = -gamepad1.right_stick_x;
+        double rotation = -gamepad1.right_stick_x*rotationMultiplier;
         rightBackPower    = Range.clip((forward + side + rotation), -1.0, 1.0) ;
         leftBackPower   = Range.clip((forward - side - rotation), -1.0, 1.0);
         rightFrontPower    = Range.clip((forward - side + rotation), -1.0, 1.0);
