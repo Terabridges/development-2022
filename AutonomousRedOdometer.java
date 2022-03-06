@@ -73,9 +73,9 @@ public class AutonomousRedOdometer extends LinearOpMode {
         waitForStart();
 
         double startTime = getRuntime();
-
-        double xAmt = 0.125;//(Math.random() - 0.5)/2;
-        double yAmt = 0.25;//(Math.random() - 0.5)/2;
+        double loops = 0;
+        double xAmt = 0;//(Math.random() - 0.5)/2;
+        double yAmt = -0.25;//(Math.random() - 0.5)/2;
         double leftFrontPower = yAmt + xAmt;
         double rightFrontPower = yAmt - xAmt;
         double leftBackPower = yAmt - xAmt;
@@ -84,18 +84,22 @@ public class AutonomousRedOdometer extends LinearOpMode {
         int rightFrontPreMovePosition = rightFront.getCurrentPosition();
         int leftBackPreMovePosition = leftBack.getCurrentPosition();
         int rightBackPreMovePosition = rightBack.getCurrentPosition();
+        int leftFrontInitPosition = leftFront.getCurrentPosition();
+        int rightFrontInitPosition = rightFront.getCurrentPosition();
+        int leftBackInitPosition = leftBack.getCurrentPosition();
+        int rightBackInitPosition = rightBack.getCurrentPosition();
         double leftFrontMultiplier = 1;
         double rightFrontMultiplier = 1;
         double leftBackMultiplier = 1;
         double rightBackMultiplier = 1;
 
         while(opModeIsActive()) {
-
             double time = getRuntime() + 1;
+
             while(getRuntime() < time){
                 telemetry.clear();
-                double xPos = leftFront.getCurrentPosition() + rightBack.getCurrentPosition() - rightFront.getCurrentPosition() - leftBack.getCurrentPosition();
-                double yPos = leftFront.getCurrentPosition() + rightBack.getCurrentPosition() + rightFront.getCurrentPosition() + leftBack.getCurrentPosition();
+                double xPos = leftFront.getCurrentPosition() - leftFrontInitPosition + rightBack.getCurrentPosition() - rightBackInitPosition - rightFront.getCurrentPosition() + rightFrontInitPosition - leftBack.getCurrentPosition() + leftBackInitPosition;
+                double yPos = leftFront.getCurrentPosition() - leftFrontInitPosition + rightBack.getCurrentPosition() - rightBackInitPosition + rightFront.getCurrentPosition() - rightFrontInitPosition + leftBack.getCurrentPosition() - leftBackInitPosition;
                 if(xPos > 1000){
                     xAmt = Math.abs(xAmt);
                     leftFrontPreMovePosition = leftFront.getCurrentPosition();
@@ -147,42 +151,22 @@ public class AutonomousRedOdometer extends LinearOpMode {
                 double rightFrontProgress = Math.abs((rightFront.getCurrentPosition() - rightFrontPreMovePosition)/rightFrontPower);
                 double rightBackProgress = Math.abs((rightBack.getCurrentPosition() - rightBackPreMovePosition)/rightBackPower);
                 double averageProgress = (leftFrontProgress + leftBackProgress + rightFrontProgress + rightBackProgress)/4;
-                double sensitivity = 2500; // Higher numbers mean more distance before change.
+                double sensitivity = 300; // Higher numbers mean more distance before change.
                 leftFrontMultiplier = 1 + (averageProgress - leftFrontProgress)/sensitivity;
                 rightFrontMultiplier = 1 + (averageProgress - rightFrontProgress)/sensitivity;
                 leftBackMultiplier = 1 + (averageProgress - leftBackProgress)/sensitivity;
                 rightBackMultiplier = 1 + (averageProgress - rightBackProgress)/sensitivity;
-//                if(leftFrontProgress <= leftFrontProgress && leftFrontProgress <= leftBackProgress && leftFrontProgress <= rightFrontProgress && leftFrontProgress <= rightBackProgress){
-//                    telemetry.addData("wheel is falling behind", "Left Front");
-//                    leftFrontMultiplier *= 1.01;
-//
-//                }
-//                if(rightFrontProgress <= leftFrontProgress && rightFrontProgress <= leftBackProgress && rightFrontProgress <= rightFrontProgress && rightFrontProgress <= rightBackProgress){
-//                    telemetry.addData("wheel is falling behind", "Right Front");
-//                    rightFrontMultiplier *= 1.02;
-//                }
-//                if(leftBackProgress <= leftFrontProgress && leftBackProgress <= leftBackProgress && leftBackProgress <= rightFrontProgress && leftBackProgress <= rightBackProgress){
-//                    telemetry.addData("wheel is falling behind", "Left Back");
-//                    leftBackMultiplier *= 1.02;
-//                }
-//                if(rightBackProgress <= leftFrontProgress && rightBackProgress <= leftBackProgress && rightBackProgress <= rightFrontProgress && rightBackProgress <= rightBackProgress){
-//                    telemetry.addData("wheel is falling behind", "Right Back");
-//                    rightBackMultiplier *= 1.02;
-//                }
-//                if(leftFrontMultiplier > 1){leftFrontMultiplier /= 1.004;}
-//                if(rightFrontMultiplier > 1){rightFrontMultiplier /= 1.004;}
-//                if(leftBackMultiplier > 1){leftBackMultiplier /= 1.004;}
-//                if(rightBackMultiplier > 1){rightBackMultiplier /= 1.004;}
-                telemetry.addData("LF", leftFrontProgress);
-                telemetry.addData("RF", rightFrontProgress);
-                telemetry.addData("LB", leftBackProgress);
-                telemetry.addData("RB", rightBackProgress);
+                loops++;
+//                telemetry.addData("LF", leftFrontProgress);
+//                telemetry.addData("RF", rightFrontProgress);
+//                telemetry.addData("LB", leftBackProgress);
+//                telemetry.addData("RB", rightBackProgress);
 
 
 
 //                telemetry.addData("time", time - getRuntime());
-//                telemetry.addData("x", leftFront.getCurrentPosition() + rightBack.getCurrentPosition() - rightFront.getCurrentPosition() - leftBack.getCurrentPosition());
-//                telemetry.addData("y", leftFront.getCurrentPosition() + rightBack.getCurrentPosition() + rightFront.getCurrentPosition() + leftBack.getCurrentPosition());
+//                telemetry.addData("x", xPos);
+//                telemetry.addData("y", yPos);
                 telemetry.update();
                 leftFront.setPower(leftFrontPower*leftFrontMultiplier);
                 rightFront.setPower(rightFrontPower*rightFrontMultiplier);
@@ -191,7 +175,7 @@ public class AutonomousRedOdometer extends LinearOpMode {
 
             }
 
-            waitOneSecond();
+            // waitOneSecond();
         }
 
 
